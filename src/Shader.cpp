@@ -68,6 +68,7 @@ GLuint Shader::createShaderProgramFromFiles(const std::string& vertexPath, const
 }
 
 Shader::Shader()
+	: ID(0)
 {
 }
 

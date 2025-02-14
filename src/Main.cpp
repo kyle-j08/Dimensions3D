@@ -105,19 +105,26 @@ int main()
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
-
+	glm::vec3 lightPosition = glm::vec3(2.f, 2.f, 2.f);
 
 	Camera mainCamera(65.f, 0.1f, 300.f, glm::vec3(3.f,0.f,0.f), glm::vec3(0.f),
 		static_cast<float>(window.getFramebufferWidth()) / window.getFramebufferHeight());
+
+	Material material;
+	material.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
+	material.diffuse = glm::vec3(1.f, 0.5f, 0.31f);
+	material.shininess = 5.f;
+	material.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+
 
 	Shader coreProgram;
 
 	coreProgram.loadShader();
 
 
-	loadModel("resources/models/ball.obj");
-	GLuint diffuseTexture = loadTexture("resources/images/OIP.jpeg", GL_LINEAR, GL_REPEAT);
-
+	loadModel("resources/models/ball1.obj");
+	GLuint diffuseTexture = loadTexture("resources/images/container2.png", GL_LINEAR, GL_REPEAT);
+	GLuint specularTexture = loadTexture("resources/images/container2.png", GL_LINEAR, GL_REPEAT);
 	glm::mat4 modelMatrix;
 
 	modelMatrix = glm::mat4(1.f);
@@ -195,10 +202,27 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseTexture);
 
-		glUniform1i(glGetUniformLocation(coreProgram.getID(), "diffuseTexture"), 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularTexture);
+
 		glUniformMatrix4fv(glGetUniformLocation(coreProgram.getID(), "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 		glUniformMatrix4fv(glGetUniformLocation(coreProgram.getID(), "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(mainCamera.getViewMatrix()));
 		glUniformMatrix4fv(glGetUniformLocation(coreProgram.getID(), "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(mainCamera.getProjectionMatrix()));
+		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "viewPos"),1, glm::value_ptr(mainCamera.getPosition()));
+
+		//Material
+		glUniform1i(glGetUniformLocation(coreProgram.getID(), "material.diffuse"), 0);
+		glUniform1i(glGetUniformLocation(coreProgram.getID(), "material.specular"), 1);
+		glUniform1f(glGetUniformLocation(coreProgram.getID(), "material.shininess"), material.shininess);
+
+		//Light
+		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.ambient"), 1, glm::value_ptr(glm::vec3(0.1f, 0.1f, 0.1f)));
+		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.specular"), 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.position"), 1, glm::value_ptr(glm::vec3(2.f, 2.f, 0.f)));
+
+
+
 
 		glBindVertexArray(VAO);
 		if (indices.empty())
