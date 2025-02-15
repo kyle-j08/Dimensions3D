@@ -121,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include; $(SolutionDir)/src</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
     </ClCompile>
@@ -150,6 +150,8 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="resources\shaders\FragmentShader.glsl" />
+    <None Include="resources\shaders\SkyboxFragment.glsl" />
+    <None Include="resources\shaders\SkyboxVertex.glsl" />
     <None Include="resources\shaders\VertexShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

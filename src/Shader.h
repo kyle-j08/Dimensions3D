@@ -17,7 +17,7 @@ public:
 	Shader();
 	~Shader();
 
-	void loadShader();
+	void loadShader(const std::string& vertexShader, const std::string& fragmentShader);
 
 	void use();
 	void unuse();

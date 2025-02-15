@@ -68,7 +68,7 @@ GLuint Shader::createShaderProgramFromFiles(const std::string& vertexPath, const
 }
 
 Shader::Shader()
-	: ID(0)
+	: ID()
 {
 }
 
@@ -77,9 +77,9 @@ Shader::~Shader()
 	glDeleteProgram(this->ID);
 }
 
-void Shader::loadShader()
+void Shader::loadShader(const std::string& vertexShader, const std::string& fragmentShader)
 {
-	this->ID = createShaderProgramFromFiles("resources/shaders/VertexShader.glsl", "resources/shaders/FragmentShader.glsl");
+	this->ID = createShaderProgramFromFiles(vertexShader, fragmentShader);
 }
 
 void Shader::use()

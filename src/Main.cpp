@@ -2,7 +2,80 @@
 
 std::vector<Vertex> vertices;
 std::vector<unsigned int> indices;
+float skyboxVertices[] = {
+	// positions          
+	-1.0f,  1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
 
+	-1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f, -1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+
+	-1.0f, -1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f, -1.0f,  1.0f,
+	-1.0f, -1.0f,  1.0f,
+
+	-1.0f,  1.0f, -1.0f,
+	 1.0f,  1.0f, -1.0f,
+	 1.0f,  1.0f,  1.0f,
+	 1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f,  1.0f,
+	-1.0f,  1.0f, -1.0f,
+
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	 1.0f, -1.0f, -1.0f,
+	 1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f,  1.0f,
+	 1.0f, -1.0f,  1.0f
+};
+
+GLuint loadCubemap(std::vector<std::string> faces)
+{
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	int width, height, nrChannels;
+	for (GLuint i = 0; i < faces.size(); i++)
+	{
+		unsigned char* data = SOIL_load_image(faces[i].c_str(), &width, &height, &nrChannels, SOIL_LOAD_RGB);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			SOIL_free_image_data(data);
+		}
+		else
+		{
+			std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+			SOIL_free_image_data(data);
+		}
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	return textureID;
+}
 
 void mainUpdate(Window& window, bool& fullscreenKey)
 {
@@ -116,10 +189,46 @@ int main()
 	material.shininess = 5.f;
 	material.specular = glm::vec3(0.5f, 0.5f, 0.5f);
 
+	//------------------------------------------------------------------------------------------------------------------------------
+
+
+	unsigned int cubemapTexture = loadCubemap({ 
+		"resources/images/vz_apocalypse_ocean_right.png",
+		"resources/images/vz_apocalypse_ocean_left.png",
+		"resources/images/vz_apocalypse_ocean_up.png",
+		"resources/images/vz_apocalypse_ocean_down.png",
+		"resources/images/vz_apocalypse_ocean_front.png",
+		"resources/images/vz_apocalypse_ocean_back.png" 
+		});
+
+
+	Shader skyboxShader;
+
+
+	GLuint skyboxVAO, skyboxVBO;
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+
+	glBindVertexArray(skyboxVAO);
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	skyboxShader.loadShader("resources/shaders/SkyboxVertex.glsl", "resources/shaders/SkyboxFragment.glsl");
+
+	//------------------------------------------------------------------------------------------------------------------------------
+
+
+	
+
 
 	Shader coreProgram;
 
-	coreProgram.loadShader();
+	coreProgram.loadShader("resources/shaders/VertexShader.glsl", "resources/shaders/FragmentShader.glsl");
 
 
 	loadModel("resources/models/ball1.obj");
@@ -165,10 +274,47 @@ int main()
 
 	
 	bool fullscreenKeyDown = false;
+
+
+	//------------------------------------------------------------------------------------------------------------------------------
+
+	skyboxShader.use();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+	glUniform1i(glGetUniformLocation(skyboxShader.getID(), "skybox"), 0);
+
+	//------------------------------------------------------------------------------------------------------------------------------
+
+	coreProgram.use();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, diffuseTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, specularTexture);
+
+	glUniformMatrix4fv(glGetUniformLocation(coreProgram.getID(), "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(coreProgram.getID(), "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(mainCamera.getViewMatrix()));
+	glUniformMatrix4fv(glGetUniformLocation(coreProgram.getID(), "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(mainCamera.getProjectionMatrix()));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "viewPos"), 1, glm::value_ptr(mainCamera.getPosition()));
+
+	//Material
+	glUniform1i(glGetUniformLocation(coreProgram.getID(), "material.diffuse"), 0);
+	glUniform1i(glGetUniformLocation(coreProgram.getID(), "material.specular"), 1);
+	glUniform1f(glGetUniformLocation(coreProgram.getID(), "material.shininess"), material.shininess);
+
+	//Light
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.ambient"), 1, glm::value_ptr(glm::vec3(0.1f, 0.1f, 0.1f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.specular"), 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.position"), 1, glm::value_ptr(glm::vec3(2.f, 2.f, 0.f)));
 	
+	//------------------------------------------------------------------------------------------------------------------------------
+
+
 	while (!window.getWindowShouldClose())
 	{
 		mainUpdate(window, fullscreenKeyDown);
+		window.updateFramebuffer(); // For resizing
 
 
 		if (window.getKeyState(GLFW_KEY_W) == GLFW_PRESS)
@@ -191,10 +337,15 @@ int main()
 
 
 		mainCamera.updateMatrixes(static_cast<float>(window.getFramebufferWidth()) / window.getFramebufferHeight());
+
+
+
+//------------------------------------------------------------------------------------------------------------------------------
 		glfwPollEvents();
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		window.updateFramebuffer(); // For resizing
+
+
 
 
 
@@ -210,16 +361,6 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(coreProgram.getID(), "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(mainCamera.getProjectionMatrix()));
 		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "viewPos"),1, glm::value_ptr(mainCamera.getPosition()));
 
-		//Material
-		glUniform1i(glGetUniformLocation(coreProgram.getID(), "material.diffuse"), 0);
-		glUniform1i(glGetUniformLocation(coreProgram.getID(), "material.specular"), 1);
-		glUniform1f(glGetUniformLocation(coreProgram.getID(), "material.shininess"), material.shininess);
-
-		//Light
-		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.ambient"), 1, glm::value_ptr(glm::vec3(0.1f, 0.1f, 0.1f)));
-		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
-		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.specular"), 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
-		glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.position"), 1, glm::value_ptr(glm::vec3(2.f, 2.f, 0.f)));
 
 
 
@@ -232,20 +373,48 @@ int main()
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 			glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 		}
+		glBindVertexArray(0);
+
+//------------------------------------------------------------------------------------------------------------------------------
+
+
+
+		glDepthFunc(GL_LEQUAL);
+		skyboxShader.use();
+
+		glm::mat4 view = glm::mat4(glm::mat3(mainCamera.getViewMatrix()));
+		glUniformMatrix4fv(glGetUniformLocation(
+			skyboxShader.getID(), "view"), 1, GL_FALSE,
+			glm::value_ptr(view));
+
+		glUniformMatrix4fv(glGetUniformLocation(
+			skyboxShader.getID(), "projection"), 1, GL_FALSE,
+			glm::value_ptr(mainCamera.getProjectionMatrix()));
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+		glUniform1i(glGetUniformLocation(skyboxShader.getID(), "skybox"), 0);
+
+
+		glBindVertexArray(VAO);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		glDepthFunc(GL_LESS);
 
 		glBindVertexArray(0);
 
 
+//------------------------------------------------------------------------------------------------------------------------------
 
-		coreProgram.unuse();
 		//End
 		window.swapBuffers();
 		glFlush();
-		glBindVertexArray(0);
-		glActiveTexture(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 
 	return 0;
 

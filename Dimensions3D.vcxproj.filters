@@ -46,5 +46,7 @@
     <None Include="resources\shaders\FragmentShader.glsl" />
     <None Include="resources\shaders\VertexShader.glsl" />
     <None Include="packages.config" />
+    <None Include="resources\shaders\SkyboxFragment.glsl" />
+    <None Include="resources\shaders\SkyboxVertex.glsl" />
   </ItemGroup>
 </Project>
