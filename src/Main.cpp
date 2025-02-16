@@ -228,15 +228,23 @@ int main()
 	glUniform1f(glGetUniformLocation(coreProgram.getID(), "material.shininess"), material.shininess);
 
 	//Light
-	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.ambient"), 1, glm::value_ptr(glm::vec3(0.1f, 0.1f, 0.1f)));
-	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
-	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.specular"), 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
-	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.position"), 1, glm::value_ptr(glm::vec3(2.f, 0.f, 0.f)));
-	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.direction"), 1, glm::value_ptr(glm::vec3(-2.f, 0.f, 0.f)));
-	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "light.brightness"), 1.0f);
-	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "light.innerAngle"), glm::cos(glm::radians(35.f)));
-	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "light.outerAngle"), glm::cos(glm::radians(40.f)));
-	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "light.fallOffDistance"), 10.f);
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "spotLights[0].ambient"), 1, glm::value_ptr(glm::vec3(0.1f, 0.1f, 0.1f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "spotLights[0].diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "spotLights[0].specular"), 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "spotLights[0].position"), 1, glm::value_ptr(glm::vec3(2.f, 0.f, 0.f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "spotLights[0].direction"), 1, glm::value_ptr(glm::vec3(-2.f, 0.f, 0.f)));
+	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "spotLights[0].brightness"), 1.0f);
+	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "spotLights[0].innerAngle"), glm::cos(glm::radians(35.f)));
+	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "spotLights[0].outerAngle"), glm::cos(glm::radians(40.f)));
+	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "spotLights[0].fallOffDistance"), 10.f);
+
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "pointLights[1].ambient"), 1, glm::value_ptr(glm::vec3(0.1f, 0.1f, 0.1f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "pointLights[1].diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "pointLights[1].specular"), 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "pointLights[1].position"), 1, glm::value_ptr(glm::vec3(2.f, 0.f, 2.f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "pointLights[1].direction"), 1, glm::value_ptr(glm::vec3(-2.f, 0.f, 0.f)));
+	glUniform1f(glGetUniformLocation(coreProgram.getID(), "pointLights[1].brightness"), 1.0f);
+	glUniform1f(glGetUniformLocation(coreProgram.getID(), "pointLights[1].fallOffDistance"), 10.f);
 
 	//------------------------------------------------------------------------------------------------------------------------------
 
@@ -276,7 +284,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 
-
+		
 
 
 		coreProgram.use();

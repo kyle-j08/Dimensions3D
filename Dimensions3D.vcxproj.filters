@@ -51,5 +51,7 @@
     <None Include="packages.config" />
     <None Include="resources\shaders\SkyboxFragment.glsl" />
     <None Include="resources\shaders\SkyboxVertex.glsl" />
+    <None Include="resources\shaders\GBufferVertex.glsl" />
+    <None Include="resources\shaders\GBufferFragment.glsl" />
   </ItemGroup>
 </Project>

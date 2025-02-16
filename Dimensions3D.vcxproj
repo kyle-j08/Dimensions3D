@@ -151,6 +151,8 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="resources\shaders\FragmentShader.glsl" />
+    <None Include="resources\shaders\GBufferFragment.glsl" />
+    <None Include="resources\shaders\GBufferVertex.glsl" />
     <None Include="resources\shaders\SkyboxFragment.glsl" />
     <None Include="resources\shaders\SkyboxVertex.glsl" />
     <None Include="resources\shaders\VertexShader.glsl" />
