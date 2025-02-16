@@ -139,6 +139,7 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\skybox.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,51 +1,10 @@
 #include "needed_libs.h"
 
+
+
+
 std::vector<Vertex> vertices;
 std::vector<unsigned int> indices;
-float skyboxVertices[] = {
-	// positions          
-	-1.0f,  1.0f, -1.0f,
-	-1.0f, -1.0f, -1.0f,
-	 1.0f, -1.0f, -1.0f,
-	 1.0f, -1.0f, -1.0f,
-	 1.0f,  1.0f, -1.0f,
-	-1.0f,  1.0f, -1.0f,
-
-	-1.0f, -1.0f,  1.0f,
-	-1.0f, -1.0f, -1.0f,
-	-1.0f,  1.0f, -1.0f,
-	-1.0f,  1.0f, -1.0f,
-	-1.0f,  1.0f,  1.0f,
-	-1.0f, -1.0f,  1.0f,
-
-	 1.0f, -1.0f, -1.0f,
-	 1.0f, -1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f, -1.0f,
-	 1.0f, -1.0f, -1.0f,
-
-	-1.0f, -1.0f,  1.0f,
-	-1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f, -1.0f,  1.0f,
-	-1.0f, -1.0f,  1.0f,
-
-	-1.0f,  1.0f, -1.0f,
-	 1.0f,  1.0f, -1.0f,
-	 1.0f,  1.0f,  1.0f,
-	 1.0f,  1.0f,  1.0f,
-	-1.0f,  1.0f,  1.0f,
-	-1.0f,  1.0f, -1.0f,
-
-	-1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f,  1.0f,
-	 1.0f, -1.0f, -1.0f,
-	 1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f,  1.0f,
-	 1.0f, -1.0f,  1.0f
-};
 
 GLuint loadCubemap(std::vector<std::string> faces)
 {
@@ -189,36 +148,7 @@ int main()
 	material.shininess = 5.f;
 	material.specular = glm::vec3(0.5f, 0.5f, 0.5f);
 
-	//------------------------------------------------------------------------------------------------------------------------------
-
-
-	unsigned int cubemapTexture = loadCubemap({ 
-		"resources/images/vz_apocalypse_ocean_right.png",
-		"resources/images/vz_apocalypse_ocean_left.png",
-		"resources/images/vz_apocalypse_ocean_up.png",
-		"resources/images/vz_apocalypse_ocean_down.png",
-		"resources/images/vz_apocalypse_ocean_front.png",
-		"resources/images/vz_apocalypse_ocean_back.png" 
-		});
-
-
-	Shader skyboxShader;
-
-
-	GLuint skyboxVAO, skyboxVBO;
-	glGenVertexArrays(1, &skyboxVAO);
-	glGenBuffers(1, &skyboxVBO);
-
-	glBindVertexArray(skyboxVAO);
-	glGenVertexArrays(1, &skyboxVAO);
-	glGenBuffers(1, &skyboxVBO);
-	glBindVertexArray(skyboxVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	skyboxShader.loadShader("resources/shaders/SkyboxVertex.glsl", "resources/shaders/SkyboxFragment.glsl");
+	
 
 	//------------------------------------------------------------------------------------------------------------------------------
 
@@ -231,13 +161,13 @@ int main()
 	coreProgram.loadShader("resources/shaders/VertexShader.glsl", "resources/shaders/FragmentShader.glsl");
 
 
-	loadModel("resources/models/ball1.obj");
+	loadModel("resources/models/box2.obj");
 	GLuint diffuseTexture = loadTexture("resources/images/container2.png", GL_LINEAR, GL_REPEAT);
 	GLuint specularTexture = loadTexture("resources/images/container2.png", GL_LINEAR, GL_REPEAT);
 	glm::mat4 modelMatrix;
 
 	modelMatrix = glm::mat4(1.f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f,0.f,0.f));
 	modelMatrix = glm::rotate(modelMatrix, 0.f, glm::vec3(1.f, 0.f, 0.f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.f), glm::vec3(0,1.f,0.f));
 	modelMatrix = glm::rotate(modelMatrix, 0.f, glm::vec3(0.f,0.f,1.f));
@@ -278,12 +208,7 @@ int main()
 
 	//------------------------------------------------------------------------------------------------------------------------------
 
-	skyboxShader.use();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-	glUniform1i(glGetUniformLocation(skyboxShader.getID(), "skybox"), 0);
 
-	//------------------------------------------------------------------------------------------------------------------------------
 
 	coreProgram.use();
 	glActiveTexture(GL_TEXTURE0);
@@ -306,8 +231,13 @@ int main()
 	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.ambient"), 1, glm::value_ptr(glm::vec3(0.1f, 0.1f, 0.1f)));
 	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.diffuse"), 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
 	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.specular"), 1, glm::value_ptr(glm::vec3(1.f, 1.f, 1.f)));
-	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.position"), 1, glm::value_ptr(glm::vec3(2.f, 2.f, 0.f)));
-	
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.position"), 1, glm::value_ptr(glm::vec3(2.f, 0.f, 0.f)));
+	glUniform3fv(glGetUniformLocation(coreProgram.getID(), "light.direction"), 1, glm::value_ptr(glm::vec3(-2.f, 0.f, 0.f)));
+	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "light.brightness"), 1.0f);
+	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "light.innerAngle"), glm::cos(glm::radians(35.f)));
+	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "light.outerAngle"), glm::cos(glm::radians(40.f)));
+	glUniform1f(glGetUniformLocation(coreProgram.getID(),  "light.fallOffDistance"), 10.f);
+
 	//------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -375,37 +305,6 @@ int main()
 		}
 		glBindVertexArray(0);
 
-//------------------------------------------------------------------------------------------------------------------------------
-
-
-
-		glDepthFunc(GL_LEQUAL);
-		skyboxShader.use();
-
-		glm::mat4 view = glm::mat4(glm::mat3(mainCamera.getViewMatrix()));
-		glUniformMatrix4fv(glGetUniformLocation(
-			skyboxShader.getID(), "view"), 1, GL_FALSE,
-			glm::value_ptr(view));
-
-		glUniformMatrix4fv(glGetUniformLocation(
-			skyboxShader.getID(), "projection"), 1, GL_FALSE,
-			glm::value_ptr(mainCamera.getProjectionMatrix()));
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-		glUniform1i(glGetUniformLocation(skyboxShader.getID(), "skybox"), 0);
-
-
-		glBindVertexArray(VAO);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		glDepthFunc(GL_LESS);
-
-		glBindVertexArray(0);
-
-
-//------------------------------------------------------------------------------------------------------------------------------
 
 		//End
 		window.swapBuffers();
@@ -415,6 +314,7 @@ int main()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
+
 
 	return 0;
 
