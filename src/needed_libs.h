@@ -33,12 +33,12 @@ struct Vertex
 };
 
 struct Material {
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
     float shininess;
 };
 
 #include "Window.h"
-#include "Camera.h"
-#include "Shader.h"
+#include "Generic/Camera.h"
+#include "Generic/Shader.h"
+#include "Generic/Object.h"
+#include "Lights/DirectionalLight.h"
+#include "Lights/PointLight.h"

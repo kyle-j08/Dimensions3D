@@ -136,25 +136,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Lights\PointLight.cpp" />
+    <ClCompile Include="src\Lights\DirectionalLight.cpp" />
+    <ClCompile Include="packages\Assimp.3.0.0\build\native\include\assimp\material.cpp" />
+    <ClCompile Include="src\Generic\Object.cpp" />
+    <ClCompile Include="src\Generic\Camera.cpp" />
+    <ClCompile Include="src\Generic\Shader.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\skybox.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Lights\PointLight.h" />
+    <ClInclude Include="src\Lights\DirectionalLight.h" />
+    <ClInclude Include="src\Generic\Object.h" />
+    <ClInclude Include="src\Generic\Camera.h" />
+    <ClInclude Include="src\Generic\Shader.h" />
     <ClInclude Include="src\needed_libs.h" />
     <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="resources\shaders\FragmentShader.glsl" />
-    <None Include="resources\shaders\GBufferFragment.glsl" />
-    <None Include="resources\shaders\GBufferVertex.glsl" />
-    <None Include="resources\shaders\SkyboxFragment.glsl" />
-    <None Include="resources\shaders\SkyboxVertex.glsl" />
     <None Include="resources\shaders\VertexShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

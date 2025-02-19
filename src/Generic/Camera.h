@@ -1,5 +1,5 @@
 #pragma once
-#include "needed_libs.h"
+#include "../needed_libs.h"
 
 class Camera
 {
